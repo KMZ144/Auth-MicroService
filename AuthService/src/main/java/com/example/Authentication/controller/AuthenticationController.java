@@ -26,9 +26,9 @@ public class AuthenticationController {
         return ResponseEntity.ok(authResponse);
     }
 
-    @GetMapping("/valid")
-    public ResponseEntity<ResponseModel> validateToken(@RequestHeader("Authorization") String token ){
-        ResponseModel validationResponse = authenticationService.validateToken(token);
-        return ResponseEntity.ok(validationResponse);
-    }
+//    @GetMapping("/valid")
+//    public ResponseEntity<ResponseModel> validateToken(@RequestHeader("Authorization") String token ){
+//        ResponseModel validationResponse = authenticationService.validateToken(token);
+//        return ResponseEntity.ok(validationResponse);
+//    }
 }

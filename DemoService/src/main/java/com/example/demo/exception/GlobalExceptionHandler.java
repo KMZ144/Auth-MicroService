@@ -10,13 +10,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 
-@RestControllerAdvice
+@ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity <ResponseModel<String>> handleRunTimeException(Exception ex){
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity <ResponseModel<String>> handleRunTimeException(RuntimeException ex){
         log.info("exceptionCalled");
         return ResponseEntity.ok(new ResponseModel(ex.getMessage()));
     }
+
 }

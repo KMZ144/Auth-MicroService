@@ -10,7 +10,7 @@ import java.util.Map;
 @RequestMapping("/api/v1/demo")
 public class DemoController {
     @GetMapping("")
-    public ResponseEntity<Map> demoService(){
-        return ResponseEntity.ok(Map.of("status","user is authenticated"));
+    public void demoService(){
+        throw new RuntimeException("sdfsdf");
     }
 }

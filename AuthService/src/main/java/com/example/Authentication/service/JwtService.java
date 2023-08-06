@@ -6,9 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import com.example.Authentication.model.User;
-import com.example.Authentication.repo.UserRepo;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,8 +24,6 @@ public class JwtService {
 	@Value("${jwt.secret}")
 	private String secret ;
 
-	private final UserRepo userRepo;
-
 	public String getUsernameFromToken(String token) {
 		return getClaimFromToken(token, Claims::getSubject);
 	}
@@ -41,9 +36,10 @@ public class JwtService {
 		final Claims claims = getAllClaimsFromToken(token);
 		return claimsResolver.apply(claims);
 	}
-    //for retrieveing any information from token we will need the secret key
 	private Claims getAllClaimsFromToken(String token) {
-		return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody();
+		return Jwts.parserBuilder().setSigningKey(secret.getBytes())
+				.build().parseClaimsJws(token)
+				.getBody();
 	}
 
 	private Boolean isTokenExpired(String token) {
@@ -64,7 +60,7 @@ public class JwtService {
 			String encodedString = Base64.getEncoder().encodeToString(secret.getBytes());
         return Jwts.builder().setClaims(claims).setSubject(subject)
 		// .setIssuedAt(new Date(System.currentTimeMillis()))
-                // .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY*1000))
+				// .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY*1000))
 				.signWith(SignatureAlgorithm.HS512, encodedString ).compact();
     }
 
@@ -73,11 +69,5 @@ public class JwtService {
 		return (username.equals(userDetails.getUsername()));
 	}
 
-	public Boolean validateToken(String token) {
-		final String userNameInToken = getUsernameFromToken(token);
-		User user = userRepo.findByEmail(userNameInToken)
-				.orElseThrow(()-> new EntityNotFoundException("not Found Entity"));
-		return (userNameInToken.equals(user.getEmail()));
-	}
 }
 

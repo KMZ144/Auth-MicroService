@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthenticationService {
-
     private final AuthenticationManager authenticationManager;
 
     private final UserDetailsServiceImpl userDetailsService;
@@ -34,10 +33,4 @@ public class AuthenticationService {
         return new ResponseModel(authResponse);
     }
 
-    public ResponseModel<ValidationResponse> validateToken (String token){
-        String jwtToken = token.substring(7);
-        boolean isValidToken =  jwtService.validateToken(jwtToken);
-        ValidationResponse validationResponse = new ValidationResponse(isValidToken);
-        return new ResponseModel<>(validationResponse);
-    }
 }
