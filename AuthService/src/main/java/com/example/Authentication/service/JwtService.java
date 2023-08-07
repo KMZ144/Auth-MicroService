@@ -23,6 +23,8 @@ public class JwtService {
 	
 	@Value("${jwt.secret}")
 	private String secret ;
+	@Value("${jwt.validity}")
+	private int JWT_TOKEN_VALIDITY;
 
 	public String getUsernameFromToken(String token) {
 		return getClaimFromToken(token, Claims::getSubject);
@@ -57,11 +59,10 @@ public class JwtService {
 
 		private String doGenerateToken(Map<String, Object> claims, String subject) {
 
-			String encodedString = Base64.getEncoder().encodeToString(secret.getBytes());
         return Jwts.builder().setClaims(claims).setSubject(subject)
-		// .setIssuedAt(new Date(System.currentTimeMillis()))
-				// .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY*1000))
-				.signWith(SignatureAlgorithm.HS512, encodedString ).compact();
+		 		.setIssuedAt(new Date(System.currentTimeMillis()))
+				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY*1000))
+				.signWith(SignatureAlgorithm.HS512, secret.getBytes()).compact();
     }
 
 	public Boolean validateToken(String token, UserDetails userDetails) {
