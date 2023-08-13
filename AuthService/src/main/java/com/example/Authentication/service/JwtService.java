@@ -1,17 +1,21 @@
 package com.example.Authentication.service;
 
 import java.util.Base64;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import javax.management.relation.Role;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
+import java.util.List;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -54,14 +58,15 @@ public class JwtService {
 		Map<String, Object> claims = new HashMap<>();
 		// userDetails.getAuthorities()
 		// .forEach(authority -> claims.put("roles", authority.getAuthority()));
-		return doGenerateToken(claims, userDetails.getUsername());
+		return doGenerateToken(claims, userDetails.getUsername() , userDetails.getAuthorities());
 	}
 
-		private String doGenerateToken(Map<String, Object> claims, String subject) {
+		private String doGenerateToken(Map<String, Object> claims, String subject, Collection<? extends GrantedAuthority> collection ) {
 
         return Jwts.builder().setClaims(claims).setSubject(subject)
 		 		.setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY*1000))
+				.claim("authorities", collection)
 				.signWith(SignatureAlgorithm.HS512, secret.getBytes()).compact();
     }
 

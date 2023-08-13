@@ -1,5 +1,7 @@
 package com.example.Authentication.dto;
 
+import com.example.Authentication.model.Role;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,5 +10,6 @@ import lombok.Setter;
 public class AuthRequest {
     
     private String email;
-    private String password;
+   // private Role role;
+ // private String password;
 }
