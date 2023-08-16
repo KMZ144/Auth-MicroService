@@ -2,14 +2,12 @@ package com.example.Authentication.service;
 
 import com.example.Authentication.dto.ResponseModel;
 import com.example.Authentication.dto.UserDetailsImpl;
-import com.example.Authentication.dto.ValidationResponse;
 import com.example.Authentication.model.User;
 import com.example.Authentication.repo.UserRepo;
 
 import java.time.LocalDateTime;
 
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,37 +28,24 @@ public class AuthenticationService {
 
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtService jwtService;
-    private final UserNameAuthProvider authProvider;
+//    private final UserNameAuthProvider authProvider;
+
+    private  final AuthenticationManager authenticationManager;
     private final UserRepo userRepo;
 
     public ResponseModel<AuthResponse> login(AuthRequest authRequest) {
         String email = authRequest.getEmail();
-        // String password = authRequest.getPassword();
-        // authenticationManager.authenticate(new
-        // UsernamePasswordAuthenticationToken(email,"pass"));
-        UserDetails details = userDetailsService.loadUserByUsername(email);
-        Authentication authentication=null;
-try{
-        authentication = new UsernameOnlyAuthenticationToken(details, email, null);
-        }catch(Exception e )
-    {
-        e.printStackTrace();
-        }
-
         // authProvider = new UserNameAuthProvider(userDetailsService);
         // authProvider= new UserNameAuthProvider(userDetailsService);
-        authProvider.authenticate(authentication);
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-        String token = jwtService.generateToken(userDetails);
+//        updateLastLogin(email);
+//        authProvider.authenticate(authentication);
+        Authentication authentication = authenticationManager.authenticate(new UsernameOnlyAuthenticationToken(email));
+//        UserDetails user = (UserDetails) authentication.getPrincipal();
+//        log.info(user.toString());
+//        UserDetails details = userDetailsService.loadUserByUsername(email);
+        String token =
+                jwtService.generateToken(authentication);
         AuthResponse authResponse = new AuthResponse(token);
-      try{  
-        updateLastLogin(email);
-    }catch(Exception e )
-    {
-        e.printStackTrace();
-        }
-
-
         return new ResponseModel(authResponse);
     }
 

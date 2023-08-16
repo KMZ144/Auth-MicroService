@@ -12,6 +12,7 @@ import javax.management.relation.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -53,12 +54,12 @@ public class JwtService {
 		return expiration.before(new Date());
 	}
 
-	public String generateToken(UserDetails userDetails) {
+	public String generateToken(Authentication userDetails) {
 		
 		Map<String, Object> claims = new HashMap<>();
-		// userDetails.getAuthorities()
-		// .forEach(authority -> claims.put("roles", authority.getAuthority()));
-		return doGenerateToken(claims, userDetails.getUsername() , userDetails.getAuthorities());
+		 userDetails.getAuthorities()
+		 .forEach(authority -> claims.put("roles", authority.getAuthority()));
+		return doGenerateToken(claims, userDetails.getName() , userDetails.getAuthorities());
 	}
 
 		private String doGenerateToken(Map<String, Object> claims, String subject, Collection<? extends GrantedAuthority> collection ) {
@@ -66,7 +67,6 @@ public class JwtService {
         return Jwts.builder().setClaims(claims).setSubject(subject)
 		 		.setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY*1000))
-				.claim("authorities", collection)
 				.signWith(SignatureAlgorithm.HS512, secret.getBytes()).compact();
     }
 
